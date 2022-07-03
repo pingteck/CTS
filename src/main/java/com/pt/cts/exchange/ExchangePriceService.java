@@ -9,9 +9,12 @@ import java.net.http.HttpResponse.BodyHandlers;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import com.pt.cts.db.DatabaseService;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,9 @@ public class ExchangePriceService {
 	private final HttpClient client;
 	private HttpRequest binanceRequest;
 	private HttpRequest huobiRequest;
+
+	@Autowired
+	private DatabaseService databaseService;
 
 	protected ExchangePriceService() {
 		this.client = HttpClient.newHttpClient();
@@ -64,7 +70,14 @@ public class ExchangePriceService {
 				if (this.checkTicker(symbol)) {
 					final double bidPrice = object.getDouble("bidPrice");
 					final double askPrice = object.getDouble("askPrice");
-					log.info(symbol + " " + bidPrice + " " + askPrice);
+					final StringBuilder sb = new StringBuilder("insert into ");
+					sb.append(symbol);
+					sb.append(" values ('binance', ");
+					sb.append(Double.toString(askPrice));
+					sb.append(", ");
+					sb.append(Double.toString(bidPrice));
+					sb.append(")");
+					this.databaseService.executeStatement(sb.toString());
 				}
 			}
 		} catch (final JSONException e) {
@@ -83,7 +96,14 @@ public class ExchangePriceService {
 				if (this.checkTicker(symbol)) {
 					final double bid = object.getDouble("bid");
 					final double ask = object.getDouble("ask");
-					log.info(symbol + " " + bid + " " + ask);
+					final StringBuilder sb = new StringBuilder("insert into ");
+					sb.append(symbol);
+					sb.append(" values ('huobi', ");
+					sb.append(Double.toString(ask));
+					sb.append(", ");
+					sb.append(Double.toString(bid));
+					sb.append(")");
+					this.databaseService.executeStatement(sb.toString());
 				}
 			}
 		} catch (final JSONException e) {
