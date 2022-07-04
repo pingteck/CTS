@@ -49,7 +49,7 @@ public class ExchangePriceService {
 	}
 
 	@Scheduled(cron = "${cts.retrieval.interval}")
-	public void run() {
+	protected void scheduledFetch() {
 		if (this.binanceRequest != null) {
 			this.client.sendAsync(this.binanceRequest, BodyHandlers.ofString()).thenApply(HttpResponse::body)
 					.thenApply(this::parseBinance).join();
@@ -60,7 +60,14 @@ public class ExchangePriceService {
 		}
 	}
 
-	public String parseBinance(final String responseBody) {
+//	[{
+//		"symbol":"ETHBTC",
+//		"bidPrice":"0.05602400",
+//		"bidQty":"3.24900000",
+//		"askPrice":"0.05602500",
+//		"askQty":"26.76400000"
+//	}]
+	protected String parseBinance(final String responseBody) {
 		JSONArray array;
 		try {
 			array = new JSONArray(responseBody);
@@ -76,6 +83,8 @@ public class ExchangePriceService {
 					sb.append(Double.toString(askPrice));
 					sb.append(", ");
 					sb.append(Double.toString(bidPrice));
+					sb.append(", ");
+					sb.append("CURRENT_TIMESTAMP");
 					sb.append(")");
 					this.databaseService.executeStatement(sb.toString());
 				}
@@ -86,7 +95,21 @@ public class ExchangePriceService {
 		return null;
 	}
 
-	public String parseHuobi(final String responseBody) {
+//	{"data":
+//		[{"symbol":"zigusdt",
+//			"open":0.017015,
+//			"high":0.017802,
+//			"low":0.016899,
+//			"close":0.017443,
+//			"amount":5846829.1526,
+//			"vol":100346.3954086911,
+//			"count":1583,
+//			"bid":0.017402,
+//			"bidSize":2476.5903,
+//			"ask":0.017484,
+//			"askSize":90.6355}
+//	}
+	protected String parseHuobi(final String responseBody) {
 		try {
 			final JSONObject response = new JSONObject(responseBody);
 			final JSONArray array = response.getJSONArray("data");
@@ -102,6 +125,8 @@ public class ExchangePriceService {
 					sb.append(Double.toString(ask));
 					sb.append(", ");
 					sb.append(Double.toString(bid));
+					sb.append(", ");
+					sb.append("CURRENT_TIMESTAMP");
 					sb.append(")");
 					this.databaseService.executeStatement(sb.toString());
 				}

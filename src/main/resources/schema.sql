@@ -9,11 +9,13 @@ create table accounts (
 create table btcusdt (
 	exchange varchar(100),
 	buy double,
-	sell double
+	sell double,
+	ts timestamp
 );
 
 create table ethusdt (
 	exchange varchar(100),
 	buy double,
-	sell double
+	sell double,
+	ts timestamp
 );
