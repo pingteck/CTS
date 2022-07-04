@@ -77,15 +77,13 @@ public class ExchangePriceService {
 				if (this.checkTicker(symbol)) {
 					final double bidPrice = object.getDouble("bidPrice");
 					final double askPrice = object.getDouble("askPrice");
-					final StringBuilder sb = new StringBuilder("insert into ");
+					final StringBuilder sb = new StringBuilder("update ");
 					sb.append(symbol);
-					sb.append(" values ('binance', ");
+					sb.append(" set buy = ");
 					sb.append(Double.toString(askPrice));
-					sb.append(", ");
+					sb.append(",  sell = ");
 					sb.append(Double.toString(bidPrice));
-					sb.append(", ");
-					sb.append("CURRENT_TIMESTAMP");
-					sb.append(")");
+					sb.append(", ts = CURRENT_TIMESTAMP where exchange = 'binance';");
 					this.databaseService.executeStatement(sb.toString());
 				}
 			}
@@ -119,15 +117,13 @@ public class ExchangePriceService {
 				if (this.checkTicker(symbol)) {
 					final double bid = object.getDouble("bid");
 					final double ask = object.getDouble("ask");
-					final StringBuilder sb = new StringBuilder("insert into ");
+					final StringBuilder sb = new StringBuilder("update ");
 					sb.append(symbol);
-					sb.append(" values ('huobi', ");
+					sb.append(" set buy = ");
 					sb.append(Double.toString(ask));
-					sb.append(", ");
+					sb.append(",  sell = ");
 					sb.append(Double.toString(bid));
-					sb.append(", ");
-					sb.append("CURRENT_TIMESTAMP");
-					sb.append(")");
+					sb.append(", ts = CURRENT_TIMESTAMP where exchange = 'huobi';");
 					this.databaseService.executeStatement(sb.toString());
 				}
 			}
