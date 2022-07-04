@@ -11,7 +11,6 @@ import javax.annotation.PostConstruct;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -34,10 +33,10 @@ public class ExchangePriceService {
 	private HttpRequest binanceRequest;
 	private HttpRequest huobiRequest;
 
-	@Autowired
-	private DatabaseService databaseService;
+	private final DatabaseService databaseService;
 
-	protected ExchangePriceService() {
+	protected ExchangePriceService(final DatabaseService databaseService) {
+		this.databaseService = databaseService;
 		this.client = HttpClient.newHttpClient();
 	}
 
@@ -61,13 +60,10 @@ public class ExchangePriceService {
 		}
 	}
 
-//	[{
-//		"symbol":"ETHBTC",
-//		"bidPrice":"0.05602400",
-//		"bidQty":"3.24900000",
-//		"askPrice":"0.05602500",
-//		"askQty":"26.76400000"
-//	}]
+	/*
+	 * Response from Binance: [{"symbol": string, "bidPrice": double, "bidQty":
+	 * double, "askPrice": double, "askQty": double}]
+	 */
 	protected String parseBinance(final String responseBody) {
 		JSONArray array;
 		try {
@@ -94,20 +90,12 @@ public class ExchangePriceService {
 		return null;
 	}
 
-//	{"data":
-//		[{"symbol":"zigusdt",
-//			"open":0.017015,
-//			"high":0.017802,
-//			"low":0.016899,
-//			"close":0.017443,
-//			"amount":5846829.1526,
-//			"vol":100346.3954086911,
-//			"count":1583,
-//			"bid":0.017402,
-//			"bidSize":2476.5903,
-//			"ask":0.017484,
-//			"askSize":90.6355}
-//	}
+	/*
+	 * Response from Huobi: "data": [{ "symbol": string, "open": double, "high":
+	 * double, "low": double, "close": double, "amount": double, "vol": double,
+	 * "count": int/double, "bid": double, "bidSize": double, "ask": double,
+	 * "askSize": double, }]
+	 */
 	protected String parseHuobi(final String responseBody) {
 		try {
 			final JSONObject response = new JSONObject(responseBody);
