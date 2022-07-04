@@ -19,6 +19,7 @@ public class AccountsController {
 		this.accounts = accounts;
 	}
 
+	// TODO: user should not have access to this
 	@GetMapping("/accounts")
 	List<Account> accounts() {
 		return this.accounts.findAll();
