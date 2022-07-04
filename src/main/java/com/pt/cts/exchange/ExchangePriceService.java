@@ -6,6 +6,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
+import javax.annotation.PostConstruct;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import com.pt.cts.db.DatabaseService;
 
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -79,11 +80,11 @@ public class ExchangePriceService {
 					final double askPrice = object.getDouble("askPrice");
 					final StringBuilder sb = new StringBuilder("update ");
 					sb.append(symbol);
-					sb.append(" set buy = ");
+					sb.append(" set buy_price = ");
 					sb.append(Double.toString(askPrice));
-					sb.append(",  sell = ");
+					sb.append(",  sell_price = ");
 					sb.append(Double.toString(bidPrice));
-					sb.append(", ts = CURRENT_TIMESTAMP where exchange = 'binance';");
+					sb.append(", timestamp = CURRENT_TIMESTAMP where exchange = 'binance';");
 					this.databaseService.executeStatement(sb.toString());
 				}
 			}
@@ -119,11 +120,11 @@ public class ExchangePriceService {
 					final double ask = object.getDouble("ask");
 					final StringBuilder sb = new StringBuilder("update ");
 					sb.append(symbol);
-					sb.append(" set buy = ");
+					sb.append(" set buy_price = ");
 					sb.append(Double.toString(ask));
-					sb.append(",  sell = ");
+					sb.append(",  sell_price = ");
 					sb.append(Double.toString(bid));
-					sb.append(", ts = CURRENT_TIMESTAMP where exchange = 'huobi';");
+					sb.append(", timestamp = CURRENT_TIMESTAMP where exchange = 'huobi';");
 					this.databaseService.executeStatement(sb.toString());
 				}
 			}

@@ -1,4 +1,4 @@
-package com.pt.cts.db.entity;
+package com.pt.cts.entity;
 
 import java.io.Serializable;
 
@@ -16,25 +16,27 @@ import lombok.Data;
 @Table(name = "accounts")
 public class Account implements Serializable {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = -4281314094290724556L;
 
 	@Id
+	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
-	@Column(nullable = false, length = 100)
+	@Column(name = "name", length = 100)
 	private String name;
 
-	@Column(nullable = false)
+	@Column(name = "usdt", nullable = false, columnDefinition = "double default 0")
 	private double usdt;
 
-	@Column(nullable = false)
+	@Column(name = "btc", nullable = false, columnDefinition = "double default 0")
 	private double btc;
 
-	@Column(nullable = false)
+	@Column(name = "eth", nullable = false, columnDefinition = "double default 0")
 	private double eth;
+
+	public Account(final String name) {
+		this.name = name;
+	}
 
 }
