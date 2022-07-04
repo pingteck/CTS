@@ -35,6 +35,9 @@ public class Account implements Serializable {
 	@Column(name = "eth", nullable = false, columnDefinition = "double default 0")
 	private double eth;
 
+	protected Account() {
+	}
+
 	public Account(final String name) {
 		this.name = name;
 	}
