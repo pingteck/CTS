@@ -1,4 +1,4 @@
-package com.pt.cts.exchange;
+package com.pt.cts.service;
 
 import java.net.URI;
 import java.net.http.HttpClient;

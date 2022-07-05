@@ -22,7 +22,7 @@ import com.pt.cts.repository.EthUsdtRepository;
 @EnableScheduling
 @EnableJpaRepositories("com.pt.cts.repository")
 @EntityScan("com.pt.cts.entity")
-@ComponentScan({ "com.pt.cts.db", "com.pt.cts.exchange", "com.pt.cts.controller" })
+@ComponentScan({ "com.pt.cts.db", "com.pt.cts.service", "com.pt.cts.controller" })
 @SpringBootApplication
 public class CTSApplication {
 
