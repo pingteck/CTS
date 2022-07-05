@@ -20,9 +20,6 @@ import com.pt.cts.repository.AccountRepository;
 import com.pt.cts.repository.TradeHistoryRepository;
 import com.pt.cts.util.Constants;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @RestController
 @RequestMapping("/trade")
 public class TradeController {
@@ -30,6 +27,9 @@ public class TradeController {
 	private final TradeHistoryRepository tradeHistory;
 	private final AggregatedPriceController aggregatedPriceController;
 	private final AccountRepository accounts;
+
+	private static final String BAD_BALANCE = "Not enough balance";
+	private static final String BAD_TRADING_PAIR = "No such trading pair";
 
 	public TradeController(final TradeHistoryRepository tradeHistory,
 			final AggregatedPriceController aggregatedPriceController, final AccountRepository accounts) {
@@ -59,7 +59,7 @@ public class TradeController {
 		if (trade.getTradingPair().equals(Constants.BTCUSDT)) {
 			final AggregatedPrice aggregated = this.aggregatedPriceController.ask(Constants.BTCUSDT);
 			if (!this.checkIfBalanceAvailableToBuy(account.getUsdt(), aggregated.getPrice(), trade.getAmount())) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough balance");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BAD_BALANCE);
 			}
 			account.setUsdt(account.getUsdt() - (aggregated.getPrice() * trade.getAmount()));
 			account.setBtc(account.getBtc() + trade.getAmount());
@@ -70,7 +70,7 @@ public class TradeController {
 		if (trade.getTradingPair().equals(Constants.ETHUSDT)) {
 			final AggregatedPrice aggregated = this.aggregatedPriceController.ask(Constants.ETHUSDT);
 			if (!this.checkIfBalanceAvailableToBuy(account.getUsdt(), aggregated.getPrice(), trade.getAmount())) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough balance");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BAD_BALANCE);
 			}
 			account.setUsdt(account.getUsdt() - (aggregated.getPrice() * trade.getAmount()));
 			account.setEth(account.getEth() + trade.getAmount());
@@ -78,7 +78,7 @@ public class TradeController {
 					aggregated.getPrice(), trade.getAmount(), 0);
 			return this.tradeHistory.save(history);
 		}
-		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No such trading pair");
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BAD_TRADING_PAIR);
 	}
 
 	@PostMapping(path = "/{accountId}/sell")
@@ -88,7 +88,7 @@ public class TradeController {
 		if (trade.getTradingPair().equals(Constants.BTCUSDT)) {
 			final AggregatedPrice aggregated = this.aggregatedPriceController.bid(Constants.BTCUSDT);
 			if (!this.checkIfBalanceAvailableToSell(account.getBtc(), aggregated.getPrice(), trade.getAmount())) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough balance");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BAD_BALANCE);
 			}
 			account.setUsdt(account.getUsdt() + (aggregated.getPrice() * trade.getAmount()));
 			account.setBtc(account.getBtc() - trade.getAmount());
@@ -99,7 +99,7 @@ public class TradeController {
 		if (trade.getTradingPair().equals(Constants.ETHUSDT)) {
 			final AggregatedPrice aggregated = this.aggregatedPriceController.bid(Constants.ETHUSDT);
 			if (!this.checkIfBalanceAvailableToSell(account.getEth(), aggregated.getPrice(), trade.getAmount())) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough balance");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BAD_BALANCE);
 			}
 			account.setUsdt(account.getUsdt() + (aggregated.getPrice() * trade.getAmount()));
 			account.setEth(account.getEth() - trade.getAmount());
@@ -107,7 +107,7 @@ public class TradeController {
 					aggregated.getPrice(), trade.getAmount(), 0);
 			return this.tradeHistory.save(history);
 		}
-		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No such trading pair");
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, BAD_TRADING_PAIR);
 	}
 
 	private boolean checkIfBalanceAvailableToBuy(final double balance, final double price, final double amount) {
