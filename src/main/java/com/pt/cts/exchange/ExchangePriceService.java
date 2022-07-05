@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.pt.cts.db.DatabaseService;
+import com.pt.cts.Constants;
+import com.pt.cts.repository.BtcUsdtRepository;
+import com.pt.cts.repository.EthUsdtRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,10 +35,12 @@ public class ExchangePriceService {
 	private HttpRequest binanceRequest;
 	private HttpRequest huobiRequest;
 
-	private final DatabaseService databaseService;
+	private final BtcUsdtRepository btcusdt;
+	private final EthUsdtRepository ethusdt;
 
-	protected ExchangePriceService(final DatabaseService databaseService) {
-		this.databaseService = databaseService;
+	protected ExchangePriceService(final BtcUsdtRepository btcusdt, final EthUsdtRepository ethusdt) {
+		this.btcusdt = btcusdt;
+		this.ethusdt = ethusdt;
 		this.client = HttpClient.newHttpClient();
 	}
 
@@ -71,17 +75,12 @@ public class ExchangePriceService {
 			for (int i = 0; i < array.length(); i++) {
 				final JSONObject object = array.getJSONObject(i);
 				final String symbol = object.getString("symbol").toLowerCase();
-				if (this.checkTicker(symbol)) {
-					final double bidPrice = object.getDouble("bidPrice");
-					final double askPrice = object.getDouble("askPrice");
-					final StringBuilder sb = new StringBuilder("update ");
-					sb.append(symbol);
-					sb.append(" set buy_price = ");
-					sb.append(Double.toString(askPrice));
-					sb.append(",  sell_price = ");
-					sb.append(Double.toString(bidPrice));
-					sb.append(", timestamp = CURRENT_TIMESTAMP where exchange = 'binance';");
-					this.databaseService.executeStatement(sb.toString());
+				final double bidPrice = object.getDouble("bidPrice");
+				final double askPrice = object.getDouble("askPrice");
+				if (symbol.equals(Constants.BTCUSDT)) {
+					this.btcusdt.updateBtcUsdt(askPrice, bidPrice, Constants.BINANCE);
+				} else if (symbol.equals(Constants.ETHUSDT)) {
+					this.ethusdt.updateEthUsdt(askPrice, bidPrice, Constants.BINANCE);
 				}
 			}
 		} catch (final JSONException e) {
@@ -103,27 +102,18 @@ public class ExchangePriceService {
 			for (int i = 0; i < array.length(); i++) {
 				final JSONObject object = array.getJSONObject(i);
 				final String symbol = object.getString("symbol").toLowerCase();
-				if (this.checkTicker(symbol)) {
-					final double bid = object.getDouble("bid");
-					final double ask = object.getDouble("ask");
-					final StringBuilder sb = new StringBuilder("update ");
-					sb.append(symbol);
-					sb.append(" set buy_price = ");
-					sb.append(Double.toString(ask));
-					sb.append(",  sell_price = ");
-					sb.append(Double.toString(bid));
-					sb.append(", timestamp = CURRENT_TIMESTAMP where exchange = 'huobi';");
-					this.databaseService.executeStatement(sb.toString());
+				final double bid = object.getDouble("bid");
+				final double ask = object.getDouble("ask");
+				if (symbol.equals(Constants.BTCUSDT)) {
+					this.btcusdt.updateBtcUsdt(bid, bid, Constants.HUOBI);
+				} else if (symbol.equals(Constants.ETHUSDT)) {
+					this.ethusdt.updateEthUsdt(ask, bid, Constants.HUOBI);
 				}
 			}
 		} catch (final JSONException e) {
 			log.error(e.toString());
 		}
 		return null;
-	}
-
-	private boolean checkTicker(final String ticker) {
-		return ticker.equalsIgnoreCase("btcusdt") || ticker.equalsIgnoreCase("ethusdt");
 	}
 
 }
