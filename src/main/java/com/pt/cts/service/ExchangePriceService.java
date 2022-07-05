@@ -47,6 +47,7 @@ public class ExchangePriceService {
 		this.huobiRequest = HttpRequest.newBuilder(URI.create(huobiUrl)).header("accept", "application/json").build();
 	}
 
+	// TODO: fix price = 0 when just initialised
 	@Scheduled(cron = "${cts.retrieval.interval}")
 	protected void scheduledFetch() {
 		log.debug("Fetching prices from exchanges.");

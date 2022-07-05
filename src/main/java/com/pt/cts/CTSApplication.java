@@ -35,7 +35,7 @@ public class CTSApplication {
 			final EthUsdtRepository ethusdt) {
 		return args -> {
 			final Account user = new Account("user");
-			user.setBtc(50000);
+			user.setUsdt(50000);
 			accounts.save(user);
 			btcusdt.save(new BtcUsdt("binance", 0, 0, new Timestamp(new Date().getTime())));
 			btcusdt.save(new BtcUsdt("huobi", 0, 0, new Timestamp(new Date().getTime())));
