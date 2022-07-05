@@ -43,7 +43,7 @@ public class ExchangePriceService {
 
 	@Scheduled(cron = "${cts.retrieval.interval}")
 	protected void scheduledFetch() {
-		log.info("Fetching prices from exchanges.");
+		log.debug("Fetching prices from exchanges.");
 		this.client.sendAsync(this.binanceRequest, BodyHandlers.ofString()).thenApply(HttpResponse::body)
 				.thenApply(this::parseBinance).join();
 		this.client.sendAsync(this.huobiRequest, BodyHandlers.ofString()).thenApply(HttpResponse::body)
