@@ -1,5 +1,7 @@
 package com.pt.cts.repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,5 +25,7 @@ public interface TradeHistoryRepository extends JpaRepository<TradeHistory, Long
 	@Query(value = "insert into trade_history (account_id, exchange, ticker, price, sell_amount) "
 			+ "values (?1, ?2, ?3, ?4, ?5)", nativeQuery = true)
 	int sell(long accountId, String exchange, String ticker, double price, double sellAmount);
+
+	List<TradeHistory> findByAccountId(long id);
 
 }

@@ -30,10 +30,10 @@ public class TradeHistory implements Serializable {
 
 	private double price;
 
-	@Column(nullable = true)
+	@Column(columnDefinition = "double default 0")
 	private double buyAmount;
 
-	@Column(nullable = true)
+	@Column(columnDefinition = "double default 0")
 	private double sellAmount;
 
 	protected TradeHistory() {
