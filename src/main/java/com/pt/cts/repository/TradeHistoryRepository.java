@@ -16,15 +16,15 @@ public interface TradeHistoryRepository extends JpaRepository<TradeHistory, Long
 
 	@Transactional
 	@Modifying
-	@Query(value = "insert into trade_history (account_id, exchange, ticker, price, buy_amount) "
+	@Query(value = "insert into trade_history (account_id, exchange, trading_pair, price, buy_amount) "
 			+ "values (?1, ?2, ?3, ?4, ?5)", nativeQuery = true)
-	int buy(long accountId, String exchange, String ticker, double price, double buyAmount);
+	int buy(long accountId, String exchange, String tradingPair, double price, double buyAmount);
 
 	@Transactional
 	@Modifying
-	@Query(value = "insert into trade_history (account_id, exchange, ticker, price, sell_amount) "
+	@Query(value = "insert into trade_history (account_id, exchange, trading_pair, price, sell_amount) "
 			+ "values (?1, ?2, ?3, ?4, ?5)", nativeQuery = true)
-	int sell(long accountId, String exchange, String ticker, double price, double sellAmount);
+	int sell(long accountId, String exchange, String tradingPair, double price, double sellAmount);
 
 	List<TradeHistory> findByAccountId(long id);
 

@@ -26,7 +26,7 @@ public class TradeHistory implements Serializable {
 
 	private String exchange;
 
-	private String ticker;
+	private String tradingPair;
 
 	private double price;
 
@@ -37,6 +37,16 @@ public class TradeHistory implements Serializable {
 	private double sellAmount;
 
 	protected TradeHistory() {
+	}
+
+	public TradeHistory(final long accountId, final String exchange, final String tradingPair, final double price,
+			final double buyAmount, final double sellAmount) {
+		this.accountId = accountId;
+		this.exchange = exchange;
+		this.tradingPair = tradingPair;
+		this.price = price;
+		this.buyAmount = buyAmount;
+		this.sellAmount = sellAmount;
 	}
 
 }
