@@ -20,6 +20,7 @@ public class AggregatedPriceController {
 	private final BtcUsdtRepository btcusdt;
 	private final EthUsdtRepository ethusdt;
 
+//	2. Create an api to retrieve the latest best aggregated price.
 	public AggregatedPriceController(final BtcUsdtRepository btcusdt, final EthUsdtRepository ethusdt) {
 		this.btcusdt = btcusdt;
 		this.ethusdt = ethusdt;
