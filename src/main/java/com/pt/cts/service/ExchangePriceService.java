@@ -30,12 +30,12 @@ public class ExchangePriceService {
 	private final HttpRequest binanceRequest;
 	private final HttpRequest huobiRequest;
 
-//	1. Price aggregation from the source below:
-//		Binance Url : https://api.binance.com/api/v3/ticker/bookTicker
-//		Houbi Url : https://api.huobi.pro/market/tickers
-//		Create a 10 seconds interval scheduler to retrieve the pricing from the source
-//		above and store the best pricing into the database.
-//		Hints: Bid Price use for SELL order, Ask Price use for BUY order
+	// 1. Price aggregation from the source below:
+	// Binance Url : https://api.binance.com/api/v3/ticker/bookTicker
+	// Houbi Url : https://api.huobi.pro/market/tickers
+	// Create a 10 seconds interval scheduler to retrieve the pricing from the
+	// source above and store the best pricing into the database.
+	// Hints: Bid Price use for SELL order, Ask Price use for BUY order
 	protected ExchangePriceService(@Value("${cts.binance.url}") final String binanceUrl,
 			@Value("${cts.huobi.url}") final String huobiUrl, final BtcUsdtRepository btcusdt,
 			final EthUsdtRepository ethusdt) {
@@ -57,8 +57,12 @@ public class ExchangePriceService {
 	}
 
 	/*
-	 * Response from Binance: [{"symbol": string, "bidPrice": double, "bidQty":
-	 * double, "askPrice": double, "askQty": double}]
+	 * Response from Binance: [{ // NOSONAR: response as reference
+	 * "symbol": string,
+	 * "bidPrice": double,
+	 * "bidQty": double,
+	 * "askPrice": double,
+	 * "askQty": double }]
 	 */
 	protected String parseBinance(final String responseBody) {
 		JSONArray array;
@@ -82,10 +86,20 @@ public class ExchangePriceService {
 	}
 
 	/*
-	 * Response from Huobi: "data": [{ "symbol": string, "open": double, "high":
-	 * double, "low": double, "close": double, "amount": double, "vol": double,
-	 * "count": int/double, "bid": double, "bidSize": double, "ask": double,
-	 * "askSize": double, }]
+	 * Response from Huobi:
+	 * "data": [{ // NOSONAR: response as reference
+	 * "symbol": string,
+	 * "open": double,
+	 * "high": double,
+	 * "low": double,
+	 * "close": double,
+	 * "amount": double,
+	 * "vol": double,
+	 * "count": int/double,
+	 * "bid": double,
+	 * "bidSize": double,
+	 * "ask": double,
+	 * "askSize": double }]
 	 */
 	protected String parseHuobi(final String responseBody) {
 		try {
