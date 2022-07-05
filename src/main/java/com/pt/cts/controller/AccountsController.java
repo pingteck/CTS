@@ -25,11 +25,13 @@ public class AccountsController {
 		return this.accounts.findAll();
 	}
 
+	// TODO: check for authorisation
 	@GetMapping("/accounts/{id}")
 	Account getAccount(@PathVariable final Long id) {
 		return this.accounts.findById(id).orElseThrow();
 	}
 
+	// 4. Create an api to retrieve the user’s crypto currencies wallet balance
 	@GetMapping("/accounts/{id}/balance")
 	Balance getBalance(@PathVariable final Long id) {
 		final Account account = this.accounts.findById(id).orElseThrow();
