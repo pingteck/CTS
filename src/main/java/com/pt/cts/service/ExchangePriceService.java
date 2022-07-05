@@ -6,8 +6,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
-import javax.annotation.PostConstruct;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,43 +23,31 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ExchangePriceService {
 
-	@Value("${cts.binance.url}")
-	private String binanceUrl;
-
-	@Value("${cts.huobi.url}")
-	private String huobiUrl;
-
-	private final HttpClient client;
-	private HttpRequest binanceRequest;
-	private HttpRequest huobiRequest;
-
 	private final BtcUsdtRepository btcusdt;
 	private final EthUsdtRepository ethusdt;
 
-	protected ExchangePriceService(final BtcUsdtRepository btcusdt, final EthUsdtRepository ethusdt) {
+	private final HttpClient client;
+	private final HttpRequest binanceRequest;
+	private final HttpRequest huobiRequest;
+
+	protected ExchangePriceService(@Value("${cts.binance.url}") final String binanceUrl,
+			@Value("${cts.huobi.url}") final String huobiUrl, final BtcUsdtRepository btcusdt,
+			final EthUsdtRepository ethusdt) {
 		this.btcusdt = btcusdt;
 		this.ethusdt = ethusdt;
 		this.client = HttpClient.newHttpClient();
-	}
-
-	@PostConstruct
-	private void init() {
-		this.binanceRequest = HttpRequest.newBuilder(URI.create(this.binanceUrl)).header("accept", "application/json")
+		this.binanceRequest = HttpRequest.newBuilder(URI.create(binanceUrl)).header("accept", "application/json")
 				.build();
-		this.huobiRequest = HttpRequest.newBuilder(URI.create(this.huobiUrl)).header("accept", "application/json")
-				.build();
+		this.huobiRequest = HttpRequest.newBuilder(URI.create(huobiUrl)).header("accept", "application/json").build();
 	}
 
 	@Scheduled(cron = "${cts.retrieval.interval}")
 	protected void scheduledFetch() {
-		if (this.binanceRequest != null) {
-			this.client.sendAsync(this.binanceRequest, BodyHandlers.ofString()).thenApply(HttpResponse::body)
-					.thenApply(this::parseBinance).join();
-		}
-		if (this.huobiRequest != null) {
-			this.client.sendAsync(this.huobiRequest, BodyHandlers.ofString()).thenApply(HttpResponse::body)
-					.thenApply(this::parseHuobi).join();
-		}
+		log.info("Fetching prices from exchanges.");
+		this.client.sendAsync(this.binanceRequest, BodyHandlers.ofString()).thenApply(HttpResponse::body)
+				.thenApply(this::parseBinance).join();
+		this.client.sendAsync(this.huobiRequest, BodyHandlers.ofString()).thenApply(HttpResponse::body)
+				.thenApply(this::parseHuobi).join();
 	}
 
 	/*
