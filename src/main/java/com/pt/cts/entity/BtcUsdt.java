@@ -14,7 +14,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Entity
 @Table(name = "btcusdt")
-public class BtcUsdt implements Serializable {
+public class BtcUsdt implements TradingPair, Serializable {
 
 	private static final long serialVersionUID = -2979878060912029192L;
 

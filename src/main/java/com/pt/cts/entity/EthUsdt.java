@@ -14,7 +14,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Entity
 @Table(name = "ethusdt")
-public class EthUsdt implements Serializable {
+public class EthUsdt implements TradingPair, Serializable {
 
 	private static final long serialVersionUID = -6986615523692481755L;
 

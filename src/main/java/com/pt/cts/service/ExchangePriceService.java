@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.pt.cts.Constants;
 import com.pt.cts.repository.BtcUsdtRepository;
 import com.pt.cts.repository.EthUsdtRepository;
+import com.pt.cts.util.Constants;
 
 import lombok.extern.slf4j.Slf4j;
 
